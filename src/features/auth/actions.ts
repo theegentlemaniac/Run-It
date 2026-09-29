@@ -65,13 +65,21 @@ export async function signInWithPassword(
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
-  // Prefer the trusted, server-controlled site URL. Request headers
-  // (`Origin`/`Host`) are only used as a last-resort dev fallback since
-  // they can be absent or manipulated by the client.
-  const origin =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    (await headers()).get("origin") ??
-    "http://localhost:3000";
+
+  // The redirect origin must come from a trusted, server-controlled
+  // source. In production, `NEXT_PUBLIC_SITE_URL` is required; the
+  // client-supplied `Origin` header is only trusted as a convenience
+  // fallback in local development, since it could otherwise be used to
+  // redirect the OAuth flow to an attacker-controlled origin.
+  let origin = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!origin) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "NEXT_PUBLIC_SITE_URL must be set in production for OAuth redirects",
+      );
+    }
+    origin = (await headers()).get("origin") ?? "http://localhost:3000";
+  }
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
