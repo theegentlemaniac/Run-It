@@ -438,6 +438,16 @@ create policy "Live game creators can update teams"
     )
   );
 
+create policy "Live game creators can delete teams"
+  on public.live_game_teams for delete
+  to authenticated
+  using (
+    exists (
+      select 1 from public.live_games lg
+      where lg.id = live_game_teams.live_game_id and lg.created_by = auth.uid()
+    )
+  );
+
 create policy "Live game team players are viewable by everyone"
   on public.live_game_team_players for select
   using (true);
@@ -446,6 +456,18 @@ create policy "Live game creators can manage team players"
   on public.live_game_team_players for insert
   to authenticated
   with check (
+    exists (
+      select 1
+      from public.live_game_teams t
+      join public.live_games lg on lg.id = t.live_game_id
+      where t.id = live_game_team_players.team_id and lg.created_by = auth.uid()
+    )
+  );
+
+create policy "Live game creators can remove team players"
+  on public.live_game_team_players for delete
+  to authenticated
+  using (
     exists (
       select 1
       from public.live_game_teams t

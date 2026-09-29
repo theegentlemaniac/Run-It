@@ -65,11 +65,13 @@ export async function signInWithPassword(
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
-  const requestHeaders = await headers();
+  // Prefer the trusted, server-controlled site URL. Request headers
+  // (`Origin`/`Host`) are only used as a last-resort dev fallback since
+  // they can be absent or manipulated by the client.
   const origin =
-    requestHeaders.get("origin") ??
     process.env.NEXT_PUBLIC_SITE_URL ??
-    `https://${requestHeaders.get("host")}`;
+    (await headers()).get("origin") ??
+    "http://localhost:3000";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
