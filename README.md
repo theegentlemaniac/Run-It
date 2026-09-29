@@ -65,8 +65,9 @@ supabase link --project-ref <your-project-ref>
 supabase db push
 ```
 
-Or paste the contents of `supabase/migrations/0001_initial_schema.sql` into
-the Supabase SQL editor.
+Apply the migrations in order — `0001_initial_schema.sql`, then
+`0002_auto_create_profile.sql` — either via `supabase db push` above or by
+pasting the contents of each file into the Supabase SQL editor.
 
 Enable the **Google** OAuth provider under Authentication → Providers if you
 want "Continue with Google" to work.
