@@ -1,3 +1,7 @@
+// Note: In Next.js 16, `src/proxy.ts` exporting `proxy` is the renamed
+// successor to the `middleware.ts` convention (the old file/function names
+// are deprecated). This runs on every matched request; verified via
+// `next build`/`next dev` output ("Proxy (Middleware)").
 import { updateSession } from "@/lib/supabase/middleware";
 import { type NextRequest } from "next/server";
 

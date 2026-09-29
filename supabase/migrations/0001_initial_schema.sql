@@ -436,6 +436,12 @@ create policy "Live game creators can update teams"
       select 1 from public.live_games lg
       where lg.id = live_game_teams.live_game_id and lg.created_by = auth.uid()
     )
+  )
+  with check (
+    exists (
+      select 1 from public.live_games lg
+      where lg.id = live_game_teams.live_game_id and lg.created_by = auth.uid()
+    )
   );
 
 create policy "Live game creators can delete teams"
