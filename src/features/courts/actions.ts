@@ -14,6 +14,15 @@ const optionalNumber = (schema: z.ZodNumber) =>
     schema.optional(),
   );
 
+const coordinate = (min: number, max: number) =>
+  z.preprocess(
+    (value) =>
+      value === null || (typeof value === "string" && value.trim() === "")
+        ? Number.NaN
+        : Number(value),
+    z.number().min(min).max(max),
+  );
+
 const addCourtSchema = z.object({
   name: z.string().trim().min(1, "Court name is required").max(120),
   address: z.string().trim().max(250).nullable(),
@@ -22,8 +31,8 @@ const addCourtSchema = z.object({
   lighting: z.boolean(),
   indoor: z.boolean(),
   description: z.string().trim().max(2000).nullable(),
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180),
+  latitude: coordinate(-90, 90),
+  longitude: coordinate(-180, 180),
 });
 
 export async function addCourt(
@@ -38,8 +47,8 @@ export async function addCourt(
     lighting: formData.get("lighting") === "on",
     indoor: formData.get("indoor") === "on",
     description: formData.get("description") || null,
-    latitude: Number(formData.get("latitude")),
-    longitude: Number(formData.get("longitude")),
+    latitude: formData.get("latitude"),
+    longitude: formData.get("longitude"),
   });
 
   if (!parsed.success) {

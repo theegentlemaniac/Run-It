@@ -35,6 +35,7 @@ export interface Database {
           id: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Row"]>;
+        Relationships: [];
       };
       courts: {
         Row: {
@@ -60,6 +61,7 @@ export interface Database {
           location: unknown;
         };
         Update: Partial<Database["public"]["Tables"]["courts"]["Row"]>;
+        Relationships: [];
       };
       court_media: {
         Row: {
@@ -76,6 +78,7 @@ export interface Database {
           url: string;
         };
         Update: Partial<Database["public"]["Tables"]["court_media"]["Row"]>;
+        Relationships: [];
       };
       court_reviews: {
         Row: {
@@ -94,6 +97,7 @@ export interface Database {
           rating: number;
         };
         Update: Partial<Database["public"]["Tables"]["court_reviews"]["Row"]>;
+        Relationships: [];
       };
       games: {
         Row: {
@@ -119,6 +123,7 @@ export interface Database {
           start_time: string;
         };
         Update: Partial<Database["public"]["Tables"]["games"]["Row"]>;
+        Relationships: [];
       };
       game_rsvps: {
         Row: {
@@ -134,6 +139,7 @@ export interface Database {
           user_id: string;
         };
         Update: Partial<Database["public"]["Tables"]["game_rsvps"]["Row"]>;
+        Relationships: [];
       };
       live_games: {
         Row: {
@@ -152,6 +158,7 @@ export interface Database {
           created_by: string;
         };
         Update: Partial<Database["public"]["Tables"]["live_games"]["Row"]>;
+        Relationships: [];
       };
       live_game_teams: {
         Row: {
@@ -168,6 +175,7 @@ export interface Database {
           name: string;
         };
         Update: Partial<Database["public"]["Tables"]["live_game_teams"]["Row"]>;
+        Relationships: [];
       };
       live_game_team_players: {
         Row: {
@@ -184,6 +192,7 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["live_game_team_players"]["Row"]
         >;
+        Relationships: [];
       };
       score_events: {
         Row: {
@@ -202,7 +211,10 @@ export interface Database {
           created_by: string;
         };
         Update: never;
+        Relationships: [];
       };
     };
+    Views: { [_ in never]: never };
+    Functions: { [_ in never]: never };
   };
 }
