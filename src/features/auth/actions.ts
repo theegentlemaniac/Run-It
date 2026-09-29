@@ -65,7 +65,11 @@ export async function signInWithPassword(
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
+  const requestHeaders = await headers();
+  const origin =
+    requestHeaders.get("origin") ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    `https://${requestHeaders.get("host")}`;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
