@@ -23,11 +23,19 @@
 -- functions only ever return a boolean/aggregate, never raw rows, so no
 -- additional data is exposed beyond what the original subqueries already
 -- checked for.
+--
+-- Both helpers deliberately take no user-id argument and always check
+-- `auth.uid()` internally (rather than accepting an arbitrary `_user_id`).
+-- They are `security definer`, so a client could call them directly as an
+-- RPC in addition to via the policy; by hard-coding `auth.uid()` as the
+-- subject, a caller can only ever learn facts about *themselves*
+-- ("am I the host of game X" / "did I RSVP to game X"), which they already
+-- legitimately know, never about an arbitrary other user.
 
 drop policy if exists "Open games are viewable by everyone" on public.games;
 drop policy if exists "RSVPs are viewable by game host and participants" on public.game_rsvps;
 
-create or replace function public.is_game_host(_game_id uuid, _user_id uuid)
+create or replace function public.is_game_host(_game_id uuid)
 returns boolean
 language sql
 stable
@@ -36,11 +44,11 @@ set search_path = public
 as $$
   select exists (
     select 1 from public.games g
-    where g.id = _game_id and g.host_id = _user_id
+    where g.id = _game_id and g.host_id = auth.uid()
   );
 $$;
 
-create or replace function public.has_game_rsvp(_game_id uuid, _user_id uuid)
+create or replace function public.has_game_rsvp(_game_id uuid)
 returns boolean
 language sql
 stable
@@ -49,14 +57,14 @@ set search_path = public
 as $$
   select exists (
     select 1 from public.game_rsvps r
-    where r.game_id = _game_id and r.user_id = _user_id
+    where r.game_id = _game_id and r.user_id = auth.uid()
   );
 $$;
 
-revoke all on function public.is_game_host(uuid, uuid) from public;
-revoke all on function public.has_game_rsvp(uuid, uuid) from public;
-grant execute on function public.is_game_host(uuid, uuid) to anon, authenticated;
-grant execute on function public.has_game_rsvp(uuid, uuid) to anon, authenticated;
+revoke all on function public.is_game_host(uuid) from public;
+revoke all on function public.has_game_rsvp(uuid) from public;
+grant execute on function public.is_game_host(uuid) to anon, authenticated;
+grant execute on function public.has_game_rsvp(uuid) to anon, authenticated;
 
 create policy "Open games are viewable by everyone"
   on public.games for select
@@ -65,7 +73,7 @@ create policy "Open games are viewable by everyone"
     and (
       visibility = 'open'
       or host_id = auth.uid()
-      or public.has_game_rsvp(games.id, auth.uid())
+      or public.has_game_rsvp(games.id)
     )
   );
 
@@ -73,7 +81,7 @@ create policy "RSVPs are viewable by game host and participants"
   on public.game_rsvps for select
   using (
     user_id = auth.uid()
-    or public.is_game_host(game_rsvps.game_id, auth.uid())
+    or public.is_game_host(game_rsvps.game_id)
   );
 
 -- ---------------------------------------------------------------------------
