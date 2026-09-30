@@ -22,6 +22,7 @@ export interface Database {
           id: string;
           full_name: string | null;
           avatar_url: string | null;
+          date_of_birth: string | null;
           position: string | null;
           skill_rating: SkillLevel;
           home_court_id: string | null;

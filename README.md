@@ -54,6 +54,14 @@ cp .env.example .env.local
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only, never expose to the client) |
 | `NEXT_PUBLIC_MAPBOX_TOKEN` | Mapbox GL JS public access token |
 
+### Demo account
+
+For local testing without creating a new account each time, create a user in
+the Supabase Auth dashboard, then set `DEMO_ACCOUNT_EMAIL` and
+`DEMO_ACCOUNT_PASSWORD` in `.env.local`. Restart the dev server and click
+**Demo login (dev only)** on `/login`. The button is only available outside
+production.
+
 ### 3. Apply the database schema
 
 The schema (tables, PostGIS geospatial columns, RLS policies) lives in
@@ -65,9 +73,10 @@ supabase link --project-ref <your-project-ref>
 supabase db push
 ```
 
-Apply the migrations in order — `0001_initial_schema.sql`, then
-`0002_auto_create_profile.sql` — either via `supabase db push` above or by
-pasting the contents of each file into the Supabase SQL editor.
+Apply the migrations in order — `0001_initial_schema.sql`,
+`0002_auto_create_profile.sql`, then `0003_add_profile_date_of_birth.sql` —
+either via `supabase db push` above or by pasting the contents of each file
+into the Supabase SQL editor.
 
 Enable the **Google** OAuth provider under Authentication → Providers if you
 want "Continue with Google" to work.
