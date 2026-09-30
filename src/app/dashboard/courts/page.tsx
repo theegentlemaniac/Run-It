@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { getCourts } from "@/features/courts/queries";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CourtIcon, LightbulbIcon, BuildingIcon, PlusIcon } from "@/components/ui/icons";
 
 export default async function CourtsPage() {
   const courts = await getCourts();
@@ -8,54 +13,52 @@ export default async function CourtsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Courts</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Discover basketball courts in your community.
-          </p>
+          <h1 className="font-display text-2xl tracking-wide sm:text-3xl">Courts</h1>
+          <p className="text-sm text-muted">Discover basketball courts in your community.</p>
         </div>
-        <Link
-          href="/dashboard/courts/new"
-          className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-        >
+        <Link href="/dashboard/courts/new" className={buttonVariants()}>
+          <PlusIcon size={16} />
           Add a court
         </Link>
       </div>
 
       {courts.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-black/[.08] p-8 text-center dark:border-white/[.145]">
-          <p className="text-zinc-500 dark:text-zinc-400">
-            No courts yet — be the first to add one
-          </p>
-        </div>
+        <EmptyState
+          icon={<CourtIcon size={24} />}
+          title="No courts yet"
+          description="Be the first to add one for your community."
+          action={
+            <Link href="/dashboard/courts/new" className={buttonVariants({ size: "sm" })}>
+              <PlusIcon size={16} />
+              Add a court
+            </Link>
+          }
+        />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {courts.map((court) => (
-            <Link
-              key={court.id}
-              href={`/dashboard/courts/${court.id}`}
-              className="rounded-xl border border-black/[.08] p-5 transition-colors hover:bg-black/[.02] dark:border-white/[.145] dark:hover:bg-white/[.03]"
-            >
-              <h2 className="font-medium">{court.name}</h2>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                {court.address || "Address not provided"}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                {court.surface && (
-                  <span className="rounded-full bg-black/[.05] px-2.5 py-1 dark:bg-white/[.08]">
-                    {court.surface}
-                  </span>
-                )}
-                {court.lighting && (
-                  <span className="rounded-full bg-black/[.05] px-2.5 py-1 dark:bg-white/[.08]">
-                    Lighting
-                  </span>
-                )}
-                {court.indoor && (
-                  <span className="rounded-full bg-black/[.05] px-2.5 py-1 dark:bg-white/[.08]">
-                    Indoor
-                  </span>
-                )}
-              </div>
+            <Link key={court.id} href={`/dashboard/courts/${court.id}`}>
+              <Card hover>
+                <h2 className="font-display text-lg tracking-wide">{court.name}</h2>
+                <p className="mt-1 text-sm text-muted">
+                  {court.address || "Address not provided"}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {court.surface && <Badge>{court.surface}</Badge>}
+                  {court.lighting && (
+                    <Badge>
+                      <LightbulbIcon size={13} />
+                      Lighting
+                    </Badge>
+                  )}
+                  {court.indoor && (
+                    <Badge>
+                      <BuildingIcon size={13} />
+                      Indoor
+                    </Badge>
+                  )}
+                </div>
+              </Card>
             </Link>
           ))}
         </div>
@@ -63,3 +66,4 @@ export default async function CourtsPage() {
     </div>
   );
 }
+

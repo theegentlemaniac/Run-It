@@ -2,6 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReviewForm } from "@/features/courts/review-form";
 import { getCourtById, getCourtReviews } from "@/features/courts/queries";
+import { Card, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StarIcon, LightbulbIcon, BuildingIcon } from "@/components/ui/icons";
 
 export default async function CourtDetailPage({
   params,
@@ -24,95 +28,97 @@ export default async function CourtDetailPage({
       <div>
         <Link
           href="/dashboard/courts"
-          className="text-sm text-zinc-500 hover:text-foreground dark:text-zinc-400"
+          className="text-sm text-muted transition-colors hover:text-foreground"
         >
           ← All courts
         </Link>
         <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">{court.name}</h1>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              {court.address || "Address not provided"}
-            </p>
+            <h1 className="font-display text-2xl tracking-wide sm:text-3xl">{court.name}</h1>
+            <p className="mt-1 text-sm text-muted">{court.address || "Address not provided"}</p>
           </div>
-          <p className="text-sm font-medium">
+          <div className="flex items-center gap-1.5 text-sm font-medium">
+            <StarIcon size={16} className="text-accent" />
             {averageRating === null
               ? "No ratings yet"
               : `${averageRating.toFixed(1)} / 5 (${reviews.length} ${
                   reviews.length === 1 ? "review" : "reviews"
                 })`}
-          </p>
+          </div>
         </div>
       </div>
 
-      <section className="rounded-xl border border-black/[.08] p-5 dark:border-white/[.145]">
-        <h2 className="font-medium">Court details</h2>
-        <div className="mt-3 flex flex-wrap gap-2 text-sm">
-          {court.surface && <span>{court.surface}</span>}
+      <Card>
+        <CardTitle>Court details</CardTitle>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {court.surface && <Badge>{court.surface}</Badge>}
           {court.hoop_count !== null && (
-            <span>{court.hoop_count} {court.hoop_count === 1 ? "hoop" : "hoops"}</span>
+            <Badge>{court.hoop_count} {court.hoop_count === 1 ? "hoop" : "hoops"}</Badge>
           )}
-          {court.lighting && <span>Lighting</span>}
-          {court.indoor && <span>Indoor</span>}
+          {court.lighting && (
+            <Badge>
+              <LightbulbIcon size={13} />
+              Lighting
+            </Badge>
+          )}
+          {court.indoor && (
+            <Badge>
+              <BuildingIcon size={13} />
+              Indoor
+            </Badge>
+          )}
         </div>
         {court.description && (
-          <p className="mt-3 whitespace-pre-wrap text-sm text-zinc-600 dark:text-zinc-300">
+          <p className="mt-3 whitespace-pre-wrap text-sm text-foreground/80">
             {court.description}
           </p>
         )}
-      </section>
+      </Card>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold">Reviews</h2>
+        <h2 className="font-display text-lg tracking-wide">Reviews</h2>
         {reviews.length === 0 ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            No reviews yet. Be the first to review this court.
-          </p>
+          <EmptyState
+            icon={<StarIcon size={22} />}
+            title="No reviews yet"
+            description="Be the first to review this court."
+          />
         ) : (
           <div className="space-y-3">
             {reviews.map((review) => (
-              <article
-                key={review.id}
-                className="rounded-xl border border-black/[.08] p-5 dark:border-white/[.145]"
-              >
+              <Card key={review.id}>
                 <div className="flex items-center justify-between gap-3">
-                  <p className="font-medium">
+                  <p className="flex items-center gap-1.5 font-medium">
+                    <StarIcon size={15} className="text-accent" />
                     {review.rating} {review.rating === 1 ? "star" : "stars"}
                   </p>
-                  <time
-                    dateTime={review.created_at}
-                    className="text-xs text-zinc-500 dark:text-zinc-400"
-                  >
+                  <time dateTime={review.created_at} className="text-xs text-muted">
                     {new Date(review.created_at).toLocaleDateString()}
                   </time>
                 </div>
                 {review.comment && (
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-600 dark:text-zinc-300">
+                  <p className="mt-2 whitespace-pre-wrap text-sm text-foreground/80">
                     {review.comment}
                   </p>
                 )}
                 {review.tags.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {review.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-black/[.05] px-2.5 py-1 text-xs dark:bg-white/[.08]"
-                      >
-                        {tag}
-                      </span>
+                      <Badge key={tag}>{tag}</Badge>
                     ))}
                   </div>
                 )}
-              </article>
+              </Card>
             ))}
           </div>
         )}
       </section>
 
-      <section className="rounded-xl border border-black/[.08] p-5 dark:border-white/[.145]">
-        <h2 className="mb-4 font-medium">Leave a review</h2>
+      <Card>
+        <CardTitle className="mb-4">Leave a review</CardTitle>
         <ReviewForm courtId={court.id} />
-      </section>
+      </Card>
     </div>
   );
 }
+

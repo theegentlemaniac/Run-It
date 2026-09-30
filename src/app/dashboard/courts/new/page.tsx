@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CourtForm } from "@/features/courts/court-form";
+import { Card } from "@/components/ui/card";
 
 export default function NewCourtPage() {
   return (
@@ -7,18 +8,17 @@ export default function NewCourtPage() {
       <div>
         <Link
           href="/dashboard/courts"
-          className="text-sm text-zinc-500 hover:text-foreground dark:text-zinc-400"
+          className="text-sm text-muted transition-colors hover:text-foreground"
         >
           ← All courts
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">Add a court</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Share a place to play with your community.
-        </p>
+        <h1 className="mt-2 font-display text-2xl tracking-wide sm:text-3xl">Add a court</h1>
+        <p className="text-sm text-muted">Share a place to play with your community.</p>
       </div>
-      <div className="rounded-xl border border-black/[.08] p-6 dark:border-white/[.145]">
+      <Card>
         <CourtForm />
-      </div>
+      </Card>
     </div>
   );
 }
+

@@ -2,9 +2,12 @@
 
 import { useActionState } from "react";
 import { updateProfile } from "@/features/profile/actions";
-
-const fieldClassName =
-  "w-full rounded-md border border-black/[.08] bg-transparent px-3 py-2 text-sm outline-none focus:border-foreground dark:border-white/[.145]";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { FormError } from "@/components/ui/form-error";
 
 export function ProfileForm({
   profile,
@@ -21,59 +24,45 @@ export function ProfileForm({
 
   return (
     <form action={formAction} className="space-y-4">
-      <div className="space-y-1">
-        <label htmlFor="full_name" className="text-sm font-medium">Full name</label>
-        <input
+      <div>
+        <Label htmlFor="full_name">Full name</Label>
+        <Input
           id="full_name"
           name="full_name"
           required
           maxLength={160}
           defaultValue={profile.full_name ?? ""}
-          className={fieldClassName}
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1">
-          <label htmlFor="position" className="text-sm font-medium">Position</label>
-          <select
-            id="position"
-            name="position"
-            required
-            defaultValue={profile.position ?? ""}
-            className={fieldClassName}
-          >
+        <div>
+          <Label htmlFor="position">Position</Label>
+          <Select id="position" name="position" required defaultValue={profile.position ?? ""}>
             <option value="" disabled>Select a position</option>
             {["PG", "SG", "SF", "PF", "C"].map((position) => (
               <option key={position} value={position}>{position}</option>
             ))}
-          </select>
+          </Select>
         </div>
-        <div className="space-y-1">
-          <label htmlFor="skill_rating" className="text-sm font-medium">Skill rating</label>
-          <select
-            id="skill_rating"
-            name="skill_rating"
-            required
-            defaultValue={profile.skill_rating}
-            className={fieldClassName}
-          >
+        <div>
+          <Label htmlFor="skill_rating">Skill rating</Label>
+          <Select id="skill_rating" name="skill_rating" required defaultValue={profile.skill_rating}>
             {["beginner", "intermediate", "advanced", "pro"].map((level) => (
               <option key={level} value={level}>
                 {level.charAt(0).toUpperCase() + level.slice(1)}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
-      <div className="space-y-1">
-        <label htmlFor="bio" className="text-sm font-medium">Bio</label>
-        <textarea
+      <div>
+        <Label htmlFor="bio">Bio</Label>
+        <Textarea
           id="bio"
           name="bio"
           rows={4}
           maxLength={2000}
           defaultValue={profile.bio ?? ""}
-          className={fieldClassName}
         />
       </div>
       <label className="flex items-center gap-2 text-sm">
@@ -81,22 +70,15 @@ export function ProfileForm({
           name="looking_to_play"
           type="checkbox"
           defaultChecked={profile.looking_to_play}
-          className="accent-current"
+          className="h-4 w-4 accent-accent"
         />
         Looking to play
       </label>
-      {state?.error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.error}
-        </p>
-      )}
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-colors hover:bg-[#383838] disabled:opacity-60 dark:hover:bg-[#ccc]"
-      >
+      <FormError message={state?.error} />
+      <Button type="submit" pending={pending} className="w-full">
         {pending ? "Saving…" : "Save profile"}
-      </button>
+      </Button>
     </form>
   );
 }
+
