@@ -2,10 +2,18 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { signInWithPassword, signInWithGoogle } from "@/features/auth/actions";
+import {
+  signInWithDemoAccount,
+  signInWithPassword,
+  signInWithGoogle,
+} from "@/features/auth/actions";
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(signInWithPassword, null);
+  const [demoState, demoFormAction, demoPending] = useActionState(
+    signInWithDemoAccount,
+    null,
+  );
 
   return (
     <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-16 dark:bg-black">
@@ -25,6 +33,24 @@ export default function LoginPage() {
             Continue with Google
           </button>
         </form>
+
+        {/* Never expose demo login in production. */}
+        {process.env.NODE_ENV !== "production" && (
+          <form action={demoFormAction} className="space-y-2">
+            <button
+              type="submit"
+              disabled={demoPending}
+              className="w-full rounded-full border border-dashed border-black/[.2] px-5 py-2.5 text-sm font-medium transition-colors hover:bg-black/[.04] disabled:opacity-60 dark:border-white/[.25] dark:hover:bg-white/[.06]"
+            >
+              {demoPending ? "Signing in…" : "Demo login (dev only)"}
+            </button>
+            {demoState?.error && (
+              <p role="alert" className="text-center text-sm text-red-600 dark:text-red-400">
+                {demoState.error}
+              </p>
+            )}
+          </form>
+        )}
 
         <div className="flex items-center gap-3 text-xs uppercase text-zinc-400">
           <span className="h-px flex-1 bg-black/[.08] dark:bg-white/[.145]" />

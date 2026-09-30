@@ -35,6 +35,64 @@ export default function SignupPage() {
         </div>
 
         <form action={formAction} className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1">
+              <label htmlFor="first_name" className="text-sm font-medium">
+                First name
+              </label>
+              <input
+                id="first_name"
+                name="first_name"
+                required
+                maxLength={80}
+                autoComplete="given-name"
+                className="w-full rounded-md border border-black/[.08] bg-transparent px-3 py-2 text-sm outline-none focus:border-foreground dark:border-white/[.145]"
+              />
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="last_name" className="text-sm font-medium">
+                Last name
+              </label>
+              <input
+                id="last_name"
+                name="last_name"
+                required
+                maxLength={80}
+                autoComplete="family-name"
+                className="w-full rounded-md border border-black/[.08] bg-transparent px-3 py-2 text-sm outline-none focus:border-foreground dark:border-white/[.145]"
+              />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="date_of_birth" className="text-sm font-medium">
+              Date of birth
+            </label>
+            <input
+              id="date_of_birth"
+              name="date_of_birth"
+              type="date"
+              required
+              autoComplete="bday"
+              className="w-full rounded-md border border-black/[.08] bg-transparent px-3 py-2 text-sm outline-none focus:border-foreground dark:border-white/[.145]"
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="position" className="text-sm font-medium">
+              Position
+            </label>
+            <select
+              id="position"
+              name="position"
+              required
+              defaultValue=""
+              className="w-full rounded-md border border-black/[.08] bg-transparent px-3 py-2 text-sm outline-none focus:border-foreground dark:border-white/[.145]"
+            >
+              <option value="" disabled>Select a position</option>
+              {["PG", "SG", "SF", "PF", "C"].map((position) => (
+                <option key={position} value={position}>{position}</option>
+              ))}
+            </select>
+          </div>
           <div className="space-y-1">
             <label htmlFor="email" className="text-sm font-medium">
               Email
