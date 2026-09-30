@@ -155,6 +155,16 @@ export function CheckCircleIcon(props: IconProps) {
   );
 }
 
+export function AlertTriangleIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 3.5 21 19.5H3z" />
+      <path d="M12 9.5v4.5" />
+      <path d="M12 17h.01" />
+    </Icon>
+  );
+}
+
 export function ArrowRightIcon(props: IconProps) {
   return (
     <Icon {...props}>

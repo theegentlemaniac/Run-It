@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "mapbox-gl/dist/mapbox-gl.css";
+
 
 :root {
   --background: #fafaf9;
@@ -53,4 +55,25 @@ body {
 
 .animate-fade-in {
   animation: fade-in 0.4s ease-out both;
+}
+
+/* Mapbox GL popup styling to match the app's surface/border theme. */
+.mapboxgl-popup-content {
+  background: var(--surface);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.mapboxgl-popup-close-button {
+  color: var(--muted);
+  font-size: 1rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: var(--surface);
+  border-bottom-color: var(--surface);
 }
