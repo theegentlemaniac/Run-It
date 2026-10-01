@@ -41,6 +41,8 @@ async function addGameDetails<T extends GameRow>(games: T[]) {
     console.error("[games] failed to load court names for games list", {
       message: courtsResult.error.message,
       code: courtsResult.error.code,
+      details: courtsResult.error.details,
+      hint: courtsResult.error.hint,
       courtIds,
     });
   }
@@ -48,6 +50,8 @@ async function addGameDetails<T extends GameRow>(games: T[]) {
     console.error("[games] failed to load rsvp counts for games list", {
       message: rsvpResult.error.message,
       code: rsvpResult.error.code,
+      details: rsvpResult.error.details,
+      hint: rsvpResult.error.hint,
       gameIds,
     });
   }

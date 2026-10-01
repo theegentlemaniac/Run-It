@@ -94,6 +94,12 @@ create policy "RSVPs are viewable by game host and participants"
 -- games the caller doesn't host. Rather than reach for the service-role key
 -- (which must never be required just to render a dashboard list), expose a
 -- narrow security definer function that returns only aggregate counts.
+--
+-- This function must apply the same visibility rule as the games select
+-- policy before counting. Otherwise, an authenticated caller could guess an
+-- invite-only game id and learn its RSVP count without being its host or a
+-- participant. `has_game_rsvp` checks only the calling user's RSVP, because
+-- it takes no caller-supplied user id.
 
 create or replace function public.game_rsvp_counts(_game_ids uuid[])
 returns table (game_id uuid, going_count bigint)
@@ -102,10 +108,18 @@ stable
 security definer
 set search_path = public
 as $$
-  select r.game_id, count(*) as going_count
-  from public.game_rsvps r
-  where r.game_id = any(_game_ids) and r.status = 'going'
-  group by r.game_id;
+  select g.id as game_id, count(*) as going_count
+  from public.games g
+  join public.game_rsvps r on r.game_id = g.id
+  where g.id = any(_game_ids)
+    and g.deleted_at is null
+    and (
+      g.visibility = 'open'
+      or g.host_id = auth.uid()
+      or public.has_game_rsvp(g.id)
+    )
+    and r.status = 'going'
+  group by g.id;
 $$;
 
 revoke all on function public.game_rsvp_counts(uuid[]) from public;
