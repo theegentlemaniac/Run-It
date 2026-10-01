@@ -16,14 +16,19 @@ export type ScoreEventType = "point" | "undo" | "foul" | "timeout" | "note";
 
 /**
  * `public.courts.location` is a PostGIS `geography(Point, 4326)` column.
- * PostgREST may represent it as GeoJSON, a WKT/EWKT string, or a
- * hex-encoded WKB string depending on how it's selected. Use
+ * PostgREST may represent it as a GeoJSON Point with longitude/latitude
+ * coordinates, WKT/EWKT text, or hex-encoded WKB text. Use
  * `courtLocationToCoordinates` from `@/features/courts/coordinates` to
  * safely normalize any of these into `{ latitude, longitude }`.
  */
+export interface CourtGeoJSONPoint {
+  type: "Point";
+  coordinates: [longitude: number, latitude: number, ...additionalDimensions: number[]];
+}
+
 export type CourtLocationValue =
   | string
-  | { type: string; coordinates: unknown }
+  | CourtGeoJSONPoint
   | null;
 
 export interface Database {
