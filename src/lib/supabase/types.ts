@@ -14,6 +14,18 @@ export type RsvpStatus = "going" | "maybe" | "not_going";
 export type LiveGameStatus = "active" | "completed" | "cancelled";
 export type ScoreEventType = "point" | "undo" | "foul" | "timeout" | "note";
 
+/**
+ * `public.courts.location` is a PostGIS `geography(Point, 4326)` column.
+ * PostgREST may represent it as GeoJSON, a WKT/EWKT string, or a
+ * hex-encoded WKB string depending on how it's selected. Use
+ * `courtLocationToCoordinates` from `@/features/courts/coordinates` to
+ * safely normalize any of these into `{ latitude, longitude }`.
+ */
+export type CourtLocationValue =
+  | string
+  | { type: string; coordinates: unknown }
+  | null;
+
 export interface Database {
   public: {
     Tables: {
@@ -42,7 +54,7 @@ export interface Database {
         Row: {
           id: string;
           name: string;
-          location: unknown;
+          location: CourtLocationValue;
           address: string | null;
           surface: CourtSurface | null;
           hoop_count: number | null;
@@ -59,7 +71,7 @@ export interface Database {
         };
         Insert: Partial<Database["public"]["Tables"]["courts"]["Row"]> & {
           name: string;
-          location: unknown;
+          location: string;
         };
         Update: Partial<Database["public"]["Tables"]["courts"]["Row"]>;
         Relationships: [];
@@ -216,6 +228,11 @@ export interface Database {
       };
     };
     Views: { [_ in never]: never };
-    Functions: { [_ in never]: never };
+    Functions: {
+      game_rsvp_counts: {
+        Args: { _game_ids: string[] };
+        Returns: { game_id: string; going_count: number }[];
+      };
+    };
   };
 }
